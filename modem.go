@@ -111,9 +111,14 @@ func (m *Modem) GetNetworkTime(ctx context.Context) (time.Time, error) {
 
 	// The time is actually ISO 8601 but it seems that RFC 3339 is close enough:
 	// https://stackoverflow.com/questions/522251/whats-the-difference-between-iso-8601-and-rfc-3339-date-formats
+	// if that fails layout 1 proboably will work
+	layout1 := "2006-01-02T15:04:05-07"
 	t, err := time.Parse(time.RFC3339, str)
 	if err != nil {
-		return time.Time{}, err
+		t, err = time.Parse(layout1, str)
+		if err != nil {
+			return time.Time{}, err
+		}
 	}
 
 	// This feels like a hack and a misintepretation, but it seems that the time
